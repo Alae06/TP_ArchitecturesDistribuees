@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>MonProjet</display-name>
+	<welcome-file-list>
+		<welcome-file>debut.html</welcome-file>
+		<welcome-file>SimpleServlet</welcome-file>
+		<welcome-file>add</welcome-file>
+		<welcome-file>ActionPage</welcome-file>
+	</welcome-file-list>
+	
+	<servlet>
+	<servlet-name>MaServlet</servlet-name>
+	<servlet-class>com.MonProjet.ESTN.MaServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+	<servlet-name>MaServlet</servlet-name>
+	<url-pattern>/Hello</url-pattern>
+	</servlet-mapping>
+	
+	<context-param> 
+		<description>Nom du developpeur</description> 
+		<param-name>webmaster</param-name> 
+		<param-value>Alae Majjati</param-value> 
+	</context-param>
+	<context-param> 
+		<description>Email du webmaster</description> 
+		<param-name>Email</param-name> 
+		<param-value>alaemajjati@gmail.com</param-value> 
+	</context-param> 
+</web-app>
