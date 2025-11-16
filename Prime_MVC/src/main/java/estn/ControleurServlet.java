@@ -1,0 +1,95 @@
+package estn;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.Period;
+import estn.PrimeModel;
+
+@WebServlet("*.php")
+public class ControleurServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+     
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String path = request.getServletPath();
+		
+		
+		if ("/acceuil.php".equals(path)) {
+			request.getRequestDispatcher("vues/index.html").forward(request, response);
+		}else if ("/calculer.php".equals(path)) {
+			
+	        int id = Integer.parseInt(request.getParameter("id_employe"));
+			String url_db = "jdbc:mysql://localhost:3306/prime";
+			String user_db = "root";
+			String pwd_db = "";
+			
+			String nom="";
+			String prenom =" ";
+			Date  embauche=null;
+			double salaire= 0.;
+			
+			try {
+				Class.forName("com.mysql.cj.jdbc.Driver");
+			    Connection connection = DriverManager.getConnection(url_db, user_db, pwd_db);
+			    PreparedStatement ps = connection.prepareStatement("Select * FROM employe WHERE id =?");
+		        ps.setInt(1, id);
+		        ResultSet rs= ps.executeQuery();
+		        while (rs.next()) {
+		        	nom = rs.getString("nom");
+		        	prenom = rs.getString("prenom");
+		        	salaire = rs.getDouble("salaire");
+		        	embauche = rs.getDate("d_embauche");
+
+					
+		        	
+				}
+		        
+		        rs.close();
+		        ps.close();
+		        connection.close();
+		        
+		        // --------------------------METIER-----------------------------------
+		        
+		        
+		        double prime=0.;
+		        Period p = Period.between(LocalDate.parse(embauche.toString()), LocalDate.now());
+		        prime = salaire + (p.getYears()*500);
+		        
+		        //--------------------------------------------------------------------
+		        //---------------------------PRESENTATION-----------------------------
+		        
+		        PrimeModel primeModel = new PrimeModel();
+		        primeModel.setNom(nom);
+		        primeModel.setPrenom(prenom);
+		        primeModel.setPrime(prime);
+		        
+		        request.setAttribute("pm", primeModel);
+		        request.getRequestDispatcher("vues/resultat.jsp").forward(request, response);
+		        
+		        //--------------------------------------------------------------------
+
+				
+			} catch (ClassNotFoundException | SQLException e) {
+				e.printStackTrace();
+			}
+		}else {
+			request.getRequestDispatcher("vues/404.html").forward(request, response);
+		}
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		doGet(request, response);
+	}
+
+}
